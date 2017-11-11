@@ -60,24 +60,19 @@ public class AutonomousRed extends LinearOpMode {
             double rightPower = 0;
             s = runtime.seconds();
 
-            if (s < 1.25) {
+            if (s < 2.25) {
                 state = 1;
                 leftPower = 1;
                 rightPower = 1;
-            } else if (s < 2.25) {
+            } else if (s < 4) {
                 state = 2;
                 leftPower = 0;
                 rightPower = 1;
-            } else if (s < 4) {
+            } else if (s < 5) {
                 state = 3;
                 leftPower = 1;
                 rightPower = 1;
-            } else if (s < 4.25) {
-                state = 4;
-                leftPower = 0;
-                rightPower = 0;
             }
-
             // Send calculated power to wheels
             leftDrive.setPower(leftPower);
             rightDrive.setPower(rightPower);
