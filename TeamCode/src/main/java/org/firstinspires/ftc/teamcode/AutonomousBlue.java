@@ -30,8 +30,8 @@ public class AutonomousBlue extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
-    Servo ballservo;
-    double ballservoPower;
+    Servo sensor_arm;
+    double sensor_armPower;
 
     @Override
 
@@ -44,7 +44,7 @@ public class AutonomousBlue extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         leftDrive = hardwareMap.get(DcMotor.class, "motor_1");
         rightDrive = hardwareMap.get(DcMotor.class, "motor_2");
-        Servo ballservo = hardwareMap.get(Servo.class, "ball sensor");
+        sensor_arm = hardwareMap.get(Servo.class, "sensor_arm");
 
         double s = runtime.seconds();
         int state = 0;
@@ -63,43 +63,42 @@ public class AutonomousBlue extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower = 0;
-            double rightPower = 0;
-            ballservoPower = 0;
+            // double leftPower = 0;
+            //double rightPower = 0;
+            sensor_armPower = 0;
             s = runtime.seconds();
 
-            if (ballservoPower == 1) {
+            if (s > 0) {
                 state = 0;
-                ballservoPower = 0;
+                sensor_armPower = .65;
             }
             //omarion is doing state 1 back and forth till it decides which ball to move.
-            if (ballservoPower == 0) {
-
+            if (s > 2) {
                 state = 1;
+                sensor_armPower = 0;
             }
-            if (ballservoPower == 0 && s>3) {
-
+            if (s > 3) {
                 state = 2;
-                ballservoPower = 1;
+                sensor_armPower = -1;
             }
-            if (s < 2.25) {
-                state = 3;
-                leftPower = 1;
-                rightPower = 1;
-            } else if (s < 4) {
-                state = 4;
-                leftPower = 0;
-                rightPower = 1;
-            } else if (s < 5) {
-                state = 5;
-                leftPower = 1;
-                rightPower = 1;
+            //if (s < 3.05) {
+            //  state = 3;
+            //leftPower = 1;
+            //rightPower = 1;
+            //} else if (s < 4.80) {
+            //    state = 4;
+            //  leftPower = 0;
+            //rightPower = 1;
+            //} else if (s < 5.75) {
+            //  state = 5;
+            //leftPower = 1;
+            //rightPower = 1;
+//        }
 
-
-            }
             // Send calculated power to wheels
-            leftDrive.setPower(leftPower);
-            rightDrive.setPower(rightPower);
+            // leftDrive.setPower(leftPower);
+            // rightDrive.setPower(rightPower);
+            sensor_arm.setPosition(sensor_armPower);
 
 
             // Show the elapsed game time and wheel power.
@@ -108,7 +107,6 @@ public class AutonomousBlue extends LinearOpMode {
             telemetry.addData("Name", "Hi my name is Wall-E");
             telemetry.addData("state", state);
             telemetry.update();
-
         }
     }
 }
