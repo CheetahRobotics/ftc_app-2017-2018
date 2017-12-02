@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-        import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-        import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-        import com.qualcomm.robotcore.hardware.DcMotor;
-        import com.qualcomm.robotcore.hardware.DcMotorSimple;
-        import com.qualcomm.robotcore.util.ElapsedTime;
-        import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 
 /**
@@ -29,8 +30,11 @@ public class AutonomousBlue extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
+    Servo ballservo;
+    double ballservoPower;
 
     @Override
+
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -40,6 +44,8 @@ public class AutonomousBlue extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         leftDrive = hardwareMap.get(DcMotor.class, "motor_1");
         rightDrive = hardwareMap.get(DcMotor.class, "motor_2");
+        Servo ballservo = hardwareMap.get(Servo.class, "ball sensor");
+
         double s = runtime.seconds();
         int state = 0;
 
@@ -47,6 +53,7 @@ public class AutonomousBlue extends LinearOpMode {
         // Reverse the motor that runs backwards when connected directly to the battery
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -58,20 +65,37 @@ public class AutonomousBlue extends LinearOpMode {
             // Setup a variable for each drive wheel to save power level for telemetry
             double leftPower = 0;
             double rightPower = 0;
+            ballservoPower = 0;
             s = runtime.seconds();
 
-            if (s < 2.25) {
+            if (ballservoPower == 1) {
+                state = 0;
+                ballservoPower = 0;
+            }
+            //omarion is doing state 1 back and forth till it decides which ball to move.
+            if (ballservoPower == 0) {
+
                 state = 1;
-                leftPower = 1;
-                rightPower = 1;
-            } else if (s < 4) {
+            }
+            if (ballservoPower == 0 && s>3) {
+
                 state = 2;
-                leftPower = 0;
-                rightPower = 1;
-            } else if (s < 5) {
+                ballservoPower = 1;
+            }
+            if (s < 2.25) {
                 state = 3;
                 leftPower = 1;
                 rightPower = 1;
+            } else if (s < 4) {
+                state = 4;
+                leftPower = 0;
+                rightPower = 1;
+            } else if (s < 5) {
+                state = 5;
+                leftPower = 1;
+                rightPower = 1;
+
+
             }
             // Send calculated power to wheels
             leftDrive.setPower(leftPower);
