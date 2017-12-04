@@ -6,13 +6,23 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class AutonomousUtilities {
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+public class AllyBallEliminator {
+    ColorSensor colorSensor;
+    Telemetry telemetry;
+
+    public AllyBallEliminator(HardwareMap hardwareMap, Telemetry telemetry) {
+        this.colorSensor = hardwareMap.colorSensor.get("sensor_color");;
+        this.telemetry = telemetry;
+    }
+
     // returns the number of inches to move.
     // positive number means move forward, negative backwards.
-    public static double eliminateAllyBall(
-            ColorSensor colorSensor
-    ) {
+    public double checkSensor()
+    {
 
         // hsvValues is an array that will hold the hue, saturation, and value information.
         float hsvValues[] = {0F, 0F, 0F};
@@ -21,16 +31,19 @@ public class AutonomousUtilities {
         Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
 
         String message = "";
+        double power;
         if (colorSensor.blue() >= 1) {
-            message = "back 3";
-            return -3;
+            message = "backwards full power";
+            power = -1.0;
         } else if (colorSensor.red() >= 1) {
-            message = "forward 2";
-            return 2;
+            message = "forward full power";
+            power = 1.0;
         } else {
-            message = "foward half 1";
-            return .5;
+            message = "foward low power";
+            power = .25;
         }
+        telemetry.addData("AllyBallEliminator", message);
+        return power;
     }
 }
 // for future ref:

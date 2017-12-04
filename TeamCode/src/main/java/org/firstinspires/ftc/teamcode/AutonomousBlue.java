@@ -28,8 +28,6 @@ public class AutonomousBlue extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
     Servo sensor_arm;
     double sensor_armPower;
 
@@ -39,23 +37,11 @@ public class AutonomousBlue extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftDrive = hardwareMap.get(DcMotor.class, "motor_1");
-        rightDrive = hardwareMap.get(DcMotor.class, "motor_2");
-        sensor_arm = hardwareMap.get(Servo.class, "sensor_arm");
-
+        Driver driver = new Driver(hardwareMap, telemetry);
+        AllyBallEliminator allyBallEliminator = new AllyBallEliminator(hardwareMap, telemetry);
         double s = runtime.seconds();
         int state = 0;
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
-
-
-        // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
@@ -72,39 +58,31 @@ public class AutonomousBlue extends LinearOpMode {
                 state = 0;
                 sensor_armPower = .65;
             }
-            //omarion is doing state 1 back and forth till it decides which ball to move.
             if (s > 2) {
                 state = 1;
                 sensor_armPower = 0;
+                double power = allyBallEliminator.checkSensor();
+                driver.driveStraight(power);
             }
             if (s > 3) {
                 state = 2;
                 sensor_armPower = -1;
             }
-            //if (s < 3.05) {
-            //  state = 3;
-            //leftPower = 1;
-            //rightPower = 1;
-            //} else if (s < 4.80) {
-            //    state = 4;
-            //  leftPower = 0;
-            //rightPower = 1;
-            //} else if (s < 5.75) {
-            //  state = 5;
-            //leftPower = 1;
-            //rightPower = 1;
-//        }
+            if (s < 3.05) {
+                state = 3;
+                driver.driveStraight(1.0);
+            } else if (s < 4.80) {
+                state = 4;
+                driver.turnLeft(1.0);
+            } else if (s < 5.75) {
+                state = 5;
+                driver.driveStraight(1.0);
+            }
 
-            // Send calculated power to wheels
-            // leftDrive.setPower(leftPower);
-            // rightDrive.setPower(rightPower);
             sensor_arm.setPosition(sensor_armPower);
-
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)");//, leftPower, rightPower);
-            telemetry.addData("Name", "Hi my name is Wall-E");
             telemetry.addData("state", state);
             telemetry.update();
         }

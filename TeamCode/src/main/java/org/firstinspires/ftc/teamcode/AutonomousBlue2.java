@@ -23,47 +23,30 @@ public class AutonomousBlue2 extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        leftDrive = hardwareMap.get(DcMotor.class, "motor_1");
-        rightDrive = hardwareMap.get(DcMotor.class, "motor_2");
+        Driver driver = new Driver(hardwareMap, telemetry);
         double s = runtime.seconds();
         int state = 0;
-
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
         runtime.reset();
 
         while (opModeIsActive()) {
 
-            double leftPower = 0;
-            double rightPower = 0;
             s = runtime.seconds();
 
             if (s < 2.25) {
                 state = 1;
-                leftPower = 1;
-                rightPower = 1;
+                driver.driveStraight(1.0);
             } else if (s < 4.25) {
                 state = 2;
-                leftPower = 1;
-                rightPower = 0;
+                driver.turnRight(1.0);
             } else if (s < 5.50) {
                 state = 3;
-                leftPower = 1;
-                rightPower = 1;
+                driver.driveStraight(1.0);
             }
-
-            leftDrive.setPower(leftPower);
-            rightDrive.setPower(rightPower);
-
-
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)");
-            telemetry.addData("Name", "Hi my name is Wall-E");
             telemetry.addData("state", state);
             telemetry.update();
-
         }
     }
 }
