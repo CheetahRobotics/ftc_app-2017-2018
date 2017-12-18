@@ -34,6 +34,9 @@ public class FirstOpMode extends LinearOpMode {
     Servo servo2;
     double leftServoPower;
     double rightServoPower;
+    private DcMotor liftMotor;
+
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -46,12 +49,13 @@ public class FirstOpMode extends LinearOpMode {
         rightDrive = hardwareMap.get(DcMotor.class, "motor_2");
         servo1 = hardwareMap.get(Servo.class, "left_hand");
         servo2 = hardwareMap.get(Servo.class,"right_hand");
+        liftMotor = hardwareMap.get(DcMotor.class, "lift_motor");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
-
+        liftMotor.setDirection(DcMotor.Direction.FORWARD);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -59,7 +63,6 @@ public class FirstOpMode extends LinearOpMode {
 
             double leftPower;
             double rightPower;
-
             double drive = -gamepad1.left_stick_y;
             double turn  =  gamepad1.right_stick_x;
             leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
@@ -73,10 +76,21 @@ public class FirstOpMode extends LinearOpMode {
                 leftServoPower = 1;
                 rightServoPower= -.5;
             }
+
+            boolean pressedDown = gamepad1.dpad_down;
+            boolean pressedUp = gamepad1.dpad_up;
+
+
             servo1.setPosition(leftServoPower);
             servo2.setPosition(rightServoPower);
             leftDrive.setPower(leftPower);
             rightDrive.setPower(rightPower);
+            if (pressedDown)
+                liftMotor.setPower(.2);
+            else if (pressedUp)
+                liftMotor.setPower(-.2);
+            else
+                liftMotor.setPower(0);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);

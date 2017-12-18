@@ -22,7 +22,7 @@ public class AutonomousRed2 extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        double s = runtime.seconds();
+        double s;
         int state = 0;
 
         // Wait for the game to start (driver presses PLAY)
@@ -40,10 +40,11 @@ public class AutonomousRed2 extends LinearOpMode {
                 driver.driveStraight(1.0);
             } else if (s < 4) {
                 state = 2;
-                driver.turnRight(1.0);
-            } else if (s < 5) {
+                driver.turnLeft(1.0);
+            } else if (s < 4.85) {
                 state = 3;
-                driver.driveStraight(1.0);
+                driver.driveStraight(0);
+
             }
 
             // Show the elapsed game time and wheel power.
