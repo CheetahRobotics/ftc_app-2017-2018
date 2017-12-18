@@ -37,6 +37,8 @@ public class AutonomousBlue extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        sensor_arm = hardwareMap.get(Servo.class, "arm_1");
+
         Driver driver = new Driver(hardwareMap, telemetry);
         AllyBallEliminator allyBallEliminator = new AllyBallEliminator(hardwareMap, telemetry);
         double s = runtime.seconds();
@@ -44,6 +46,7 @@ public class AutonomousBlue extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+        double power = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -54,36 +57,34 @@ public class AutonomousBlue extends LinearOpMode {
             sensor_armPower = 0;
             s = runtime.seconds();
 
-            if (s > 0) {
+            if (s < 2) {
                 state = 0;
-                sensor_armPower = .65;
+                sensor_armPower = .7;//drop arm
             }
-            if (s > 2) {
+            else if (s < 7 ){
                 state = 1;
-                sensor_armPower = 0;
-                double power = allyBallEliminator.checkSensor();
                 driver.driveStraight(power);
+                power = allyBallEliminator.checkSensor();
             }
-            if (s > 3) {
-                state = 2;
-                sensor_armPower = -1;
+          else if (s < 10) {
+                sensor_armPower = -1; // lift arm
             }
-            if (s < 3.05) {
-                state = 3;
-                driver.driveStraight(1.0);
-            } else if (s < 4.80) {
-                state = 4;
-                driver.turnLeft(1.0);
-            } else if (s < 5.75) {
-                state = 5;
-                driver.driveStraight(1.0);
-            }
+//                state = 2;
+//            driver.driveStraight(1.0);
+//            } else if (s < 10.80) {
+//               state = 3;driver.turnLeft(1.0);
+//          } else if (s < 7.75) {
+ //              state = 4;
+//              driver.driveStraight(1.0);
+//            }
 
             sensor_arm.setPosition(sensor_armPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("state", state);
+            telemetry.addData("power", power);
+
             telemetry.update();
         }
     }
