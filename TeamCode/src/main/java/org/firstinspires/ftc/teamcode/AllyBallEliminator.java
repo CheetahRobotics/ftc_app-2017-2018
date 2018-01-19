@@ -13,10 +13,16 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class AllyBallEliminator {
     ColorSensor colorSensor;
     Telemetry telemetry;
+    Ringtone ringtone1;
 
     public AllyBallEliminator(HardwareMap hardwareMap, Telemetry telemetry) {
         this.colorSensor = hardwareMap.colorSensor.get("sensor_color");;
         this.telemetry = telemetry;
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri alarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+
+        ringtone1 = RingtoneManager.getRingtone(hardwareMap.appContext.getApplicationContext(), notification);
+
     }
 
     // returns the number of inches to move.
@@ -38,15 +44,18 @@ public class AllyBallEliminator {
         } else if (colorSensor.red() >= 1) {
             message = "forward full power";
             power = 1.0;
+            ringtone1.play();
         } else {
             message = "foward low power";
             power = .25;
         }
+
+        telemetry.addData("Clear", colorSensor.alpha());
+        telemetry.addData("Red  ", colorSensor.red());
+        telemetry.addData("Blue ", colorSensor.blue());
+        telemetry.addData("Hue", hsvValues[0]);
+
         telemetry.addData("AllyBallEliminator", message);
         return power;
     }
 }
-// for future ref:
-//            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//            Ringtone r = RingtoneManager.getRingtone(hardwareMap.appContext.getApplicationContext(), notification);
-//            r.play();
