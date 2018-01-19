@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -27,65 +28,70 @@ public class AutonomousRed extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
+    Servo sensor_arm;
+    double sensor_armPower;
 
     @Override
+
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftDrive = hardwareMap.get(DcMotor.class, "motor_1");
-        rightDrive = hardwareMap.get(DcMotor.class, "motor_2");
+        sensor_arm = hardwareMap.get(Servo.class, "arm_1");
+
+        Driver driver = new Driver(hardwareMap, telemetry);
+        AllyBallEliminator allyBallEliminator = new AllyBallEliminator(hardwareMap, telemetry, driver.leftDrive);
         double s = runtime.seconds();
         int state = 0;
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
-
-        // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        double power = 0;
+
+        sensor_armPower = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            // Setup a variable for each drive wheel to save power level for telemetry
-            double leftPower = 0;
-            double rightPower = 0;
             s = runtime.seconds();
 
-            if (s < 2.25) {
-                state = 1;
-                leftPower = 1;
-                rightPower = 1;
+            if (s < 2) {
+                state = 0;
+                sensor_armPower = .7;//drop arm
             } else if (s < 4) {
-                state = 2;
-                leftPower = 1;
-                rightPower = 0;
+                state = 1;
+                driver.driveStraight(power);
+                power = allyBallEliminator.checkSensor();
+
             } else if (s < 5) {
+                driver.stop();
+                state = 2;
+                sensor_armPower = -1; // lift arm
+            } else if (s < 6) {
                 state = 3;
-                leftPower = 1;
-                rightPower = 1;
+                driver.driveStraight(1.0);
+            } else if (s < 10) {
+                state = 4;
+                driver.turnLeft(1.0);
+            } else if (s < 12) {
+                state = 5;
+                driver.driveStraight(1.0);
+            }
+            else {
+                driver.stop();
             }
 
-            // Send calculated power to wheels
-            leftDrive.setPower(leftPower);
-            rightDrive.setPower(rightPower);
-
+            sensor_arm.setPosition(sensor_armPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)");//, leftPower, rightPower);
-            telemetry.addData("Name", "Hi my name is Wall-E");
             telemetry.addData("state", state);
+            telemetry.addData("power", power);
+
             telemetry.update();
 
         }
     }
 }
+
+

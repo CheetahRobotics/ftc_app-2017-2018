@@ -70,12 +70,15 @@ public class AutonomousBlue extends LinearOpMode {
            } else if (s < 6) {
                state = 3;
                 driver.driveStraight(1.0);
-           } else if (s < 7) {
+           } else if (s < 8.5) {
                state = 4;
                driver.turnLeft(1.0);
-            } else if (s < 8) {
+            } else if (s < 9) {
                state = 5;
                driver.driveStraight(1.0);
+            }
+            else {
+                driver.stop();
             }
 
                 sensor_arm.setPosition(sensor_armPower);
