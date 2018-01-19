@@ -66,7 +66,7 @@ public class FirstOpMode extends LinearOpMode {
             double drive = -gamepad1.left_stick_y;
             double turn  =  gamepad1.right_stick_x;
             leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+            rightPower   = Range.clip(drive - turn, -.90, .90) ;
             double trigger = gamepad1.right_trigger;
             if(trigger > 0.){
                 leftServoPower = 0;
@@ -77,8 +77,8 @@ public class FirstOpMode extends LinearOpMode {
                 rightServoPower= -.5;
             }
 
-            boolean pressedDown = gamepad1.dpad_down;
-            boolean pressedUp = gamepad1.dpad_up;
+            boolean pressedDown = gamepad1.left_trigger > 0.0;
+            boolean pressedUp = gamepad1.left_bumper;
 
 
             servo1.setPosition(leftServoPower);
