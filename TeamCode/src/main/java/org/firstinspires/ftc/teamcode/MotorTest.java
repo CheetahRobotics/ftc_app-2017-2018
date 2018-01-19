@@ -44,17 +44,13 @@ public class MotorTest extends LinearOpMode {
 
             double leftPower;
             double rightPower;
-            double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
-            leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-            rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
-            double trigger = gamepad1.right_trigger;
-
             leftDrive.setPower(1.0);
             rightDrive.setPower(1.0);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.addData("Position", "left (%d), right (%d)",
+                    leftDrive.getCurrentPosition(),
+                    rightDrive.getCurrentPosition());
             telemetry.addData("Name", "Hi my name is Wall-E");
             telemetry.update();
 

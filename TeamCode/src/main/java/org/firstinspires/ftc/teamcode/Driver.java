@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Driver {
-    private DcMotor leftDrive = null;
+    public DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
     private Telemetry telemetry;
     public Driver(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -19,6 +19,7 @@ public class Driver {
     public void driveStraight(double power) {
         leftDrive.setPower(power);
         rightDrive.setPower(power);
+        updateTelementry();
     }
     public void turnRight(double power) {
         leftDrive.setPower(power);
@@ -33,8 +34,11 @@ public class Driver {
         rightDrive.setPower(0.0);
     }
     private void updateTelementry() {
+        telemetry.addData("Position", "left (%d), right (%d)",
+                leftDrive.getCurrentPosition(),
+                rightDrive.getCurrentPosition());
         telemetry.addData("Motors", "left (%.2f), right (%.2f)",
-                leftDrive.getPowerFloat(),
-                rightDrive.getPowerFloat());
+                leftDrive.getPower(),
+                rightDrive.getPower());
     }
 }
