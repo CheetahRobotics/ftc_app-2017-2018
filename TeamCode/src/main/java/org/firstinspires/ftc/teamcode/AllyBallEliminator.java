@@ -17,8 +17,10 @@ public class AllyBallEliminator {
     Ringtone ringtone1;
     DcMotor leftMotor;
     int startPosition;
+    boolean allianceColorIsBlue;
 
-    public AllyBallEliminator(HardwareMap hardwareMap, Telemetry telemetry, DcMotor leftMotor) {
+    public AllyBallEliminator(HardwareMap hardwareMap, Telemetry telemetry, DcMotor leftMotor,
+                              boolean allianceColorIsBlue) {
         this.colorSensor = hardwareMap.colorSensor.get("sensor_color");;
         this.telemetry = telemetry;
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -27,6 +29,7 @@ public class AllyBallEliminator {
         ringtone1 = RingtoneManager.getRingtone(hardwareMap.appContext.getApplicationContext(), notification);
         this.leftMotor = leftMotor;
         this.startPosition = leftMotor.getCurrentPosition();
+        this.allianceColorIsBlue = allianceColorIsBlue;
     }
 
     boolean nowImSure = false;
@@ -36,18 +39,15 @@ public class AllyBallEliminator {
     public double checkSensor()
     {
         int changeInPosition = 0;
-        String message = "";
         double power;
         if (nowImSure) {
             changeInPosition =  Math.abs(leftMotor.getCurrentPosition() - startPosition);
             if (changeInPosition > 1250) {
-                message = "zero power";
                 power = 0;
             }
             else
                 power = lastValueOfPower;
             telemetry.addData("ChangeInPosition", changeInPosition);
-            telemetry.addData("AllyBallEliminator", message);
             return power;
         }
         // hsvValues is an array that will hold the hue, saturation, and value information.
@@ -58,17 +58,16 @@ public class AllyBallEliminator {
 
         if (colorSensor.blue() >= 1) {
             nowImSure = true;
-            message = "backwards full power";
             power = -1;
         } else if (colorSensor.red() >= 1) {
             nowImSure = true;
-            message = "forward full power";
             power = 1;
             ringtone1.play();
         } else {
-            message = "foward low power";
             power = .25;
         }
+        if (!allianceColorIsBlue)
+            power = power * -1;
         lastValueOfPower = power;
 
        telemetry.addData("Clear", colorSensor.alpha());
@@ -77,7 +76,6 @@ public class AllyBallEliminator {
        telemetry.addData("Hue", hsvValues[0]);
 
         telemetry.addData("ChangeInPosition", changeInPosition);
-        telemetry.addData("AllyBallEliminator", message);
         return power;
     }
 }

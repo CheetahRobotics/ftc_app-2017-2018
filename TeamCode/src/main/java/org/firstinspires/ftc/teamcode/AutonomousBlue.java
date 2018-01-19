@@ -40,7 +40,7 @@ public class AutonomousBlue extends LinearOpMode {
         sensor_arm = hardwareMap.get(Servo.class, "arm_1");
 
         Driver driver = new Driver(hardwareMap, telemetry);
-        AllyBallEliminator allyBallEliminator = new AllyBallEliminator(hardwareMap, telemetry, driver.leftDrive);
+        AllyBallEliminator allyBallEliminator = new AllyBallEliminator(hardwareMap, telemetry, driver.leftDrive,true);
         double s = runtime.seconds();
         int state = 0;
 
