@@ -40,7 +40,7 @@ public class AutonomousBlue extends LinearOpMode {
         sensor_arm = hardwareMap.get(Servo.class, "arm_1");
 
         Driver driver = new Driver(hardwareMap, telemetry);
-        AllyBallEliminator allyBallEliminator = new AllyBallEliminator(hardwareMap, telemetry, driver.leftDrive,true);
+        AllyBallEliminator allyBallEliminator = new AllyBallEliminator(hardwareMap, telemetry, driver.leftDrive, true);
         double s = runtime.seconds();
         int state = 0;
 
@@ -63,32 +63,31 @@ public class AutonomousBlue extends LinearOpMode {
                 driver.driveStraight(power);
                 power = allyBallEliminator.checkSensor();
 
-           } else if (s < 5) {
-               driver.stop();
+            } else if (s < 5) {
+                driver.stop();
                 state = 2;
-               sensor_armPower = -1; // lift arm
-           } else if (s < 6) {
-               state = 3;
+                sensor_armPower = -1; // lift arm
+            } else if (s < 8) {
+                state = 3;
                 driver.driveStraight(1.0);
-           } else if (s < 8.5) {
-               state = 4;
-               driver.turnLeft(1.0);
             } else if (s < 9) {
-               state = 5;
-               driver.driveStraight(1.0);
-            }
-            else {
+                state = 4;
+                driver.turnLeft(1.0);
+            } else if (s < 9.75) {
+                state = 5;
+                driver.driveStraight(1.0);
+            } else {
                 driver.stop();
             }
 
-                sensor_arm.setPosition(sensor_armPower);
+            sensor_arm.setPosition(sensor_armPower);
 
-                // Show the elapsed game time and wheel power.
-                telemetry.addData("Status", "Run Time: " + runtime.toString());
-                telemetry.addData("state", state);
-                telemetry.addData("power", power);
+            // Show the elapsed game time and wheel power.
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("state", state);
+            telemetry.addData("power", power);
 
-                telemetry.update();
+            telemetry.update();
 
         }
     }

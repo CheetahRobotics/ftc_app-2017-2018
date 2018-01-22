@@ -40,7 +40,7 @@ public class AutonomousRed extends LinearOpMode {
         sensor_arm = hardwareMap.get(Servo.class, "arm_1");
 
         Driver driver = new Driver(hardwareMap, telemetry);
-        AllyBallEliminator allyBallEliminator = new AllyBallEliminator(hardwareMap, telemetry, driver.leftDrive);
+        AllyBallEliminator allyBallEliminator = new AllyBallEliminator(hardwareMap, telemetry, driver.leftDrive,false);
         double s = runtime.seconds();
         int state = 0;
 
@@ -67,15 +67,9 @@ public class AutonomousRed extends LinearOpMode {
                 driver.stop();
                 state = 2;
                 sensor_armPower = -1; // lift arm
-            } else if (s < 6) {
+            } else if (s < 6.5) {
                 state = 3;
-                driver.driveStraight(1.0);
-            } else if (s < 10) {
-                state = 4;
-                driver.turnLeft(1.0);
-            } else if (s < 12) {
-                state = 5;
-                driver.driveStraight(1.0);
+                driver.driveStraight(-1.0);
             }
             else {
                 driver.stop();
