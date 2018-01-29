@@ -64,7 +64,7 @@ public class FirstOpMode extends LinearOpMode {
             double leftPower;
             double rightPower;
             double drive = -gamepad1.left_stick_y;
-            double turn  =  gamepad1.right_stick_x;
+            double turn  = gamepad1.right_stick_x;
             leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
             rightPower   = Range.clip(drive - turn, -.90, .90) ;
             double trigger = gamepad1.right_trigger;
@@ -80,6 +80,11 @@ public class FirstOpMode extends LinearOpMode {
             boolean pressedDown = gamepad1.left_trigger > 0.0;
             boolean pressedUp = gamepad1.left_bumper;
 
+
+            servo1.setPosition(leftServoPower);
+            servo2.setPosition(rightServoPower);
+            leftDrive.setPower(leftPower);
+            rightDrive.setPower(rightPower);
             if (pressedDown)
                 liftMotor.setPower(.2);
             else if (pressedUp)
@@ -87,14 +92,10 @@ public class FirstOpMode extends LinearOpMode {
             else
                 liftMotor.setPower(0);
 
-            servo1.setPosition(leftServoPower);
-            servo2.setPosition(rightServoPower);
-            leftDrive.setPower(leftPower);
-            rightDrive.setPower(rightPower);
-
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-            telemetry.addData("liftMotor", "(%f)", liftMotor.getPower());
+            telemetry.addData("Name", "Hi my name is Wall-E");
+            telemetry.addData("Motor", ("%f"));
             telemetry.update();
 
         }

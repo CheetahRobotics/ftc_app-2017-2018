@@ -9,7 +9,7 @@ public class Driver {
     public DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
     private Telemetry telemetry;
-    private double scaleFactor= 1./8.;
+    private double scaleFactor= 6;
     public Driver(HardwareMap hardwareMap, Telemetry telemetry) {
         this.telemetry = telemetry;
         leftDrive = hardwareMap.get(DcMotor.class, "motor_1");
@@ -23,12 +23,12 @@ public class Driver {
         updateTelementry();
     }
     public void turnRight(double power) {
-        rightDrive.setPower(0.0);
-        leftDrive.setPower(scaleFactor*power);
-    }
-    public void turnLeft(double power) {
         rightDrive.setPower(scaleFactor*power);
         leftDrive.setPower(0.0);
+    }
+    public void turnLeft(double power) {
+        rightDrive.setPower(0.0);
+        leftDrive.setPower(scaleFactor*power);
     }
     public void stop() {
         leftDrive.setPower(0.0);
