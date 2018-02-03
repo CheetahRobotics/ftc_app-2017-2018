@@ -32,16 +32,18 @@ public class FirstOpMode extends LinearOpMode {
     private DcMotor rightDrive = null;
     Servo   servo1;
     Servo servo2;
+    Servo sensor_arm;
     double leftServoPower;
     double rightServoPower;
     private DcMotor liftMotor;
+    double sensor_armPower;
 
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
+        sensor_arm = hardwareMap.get(Servo.class, "arm_1");
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
@@ -59,8 +61,10 @@ public class FirstOpMode extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        while (opModeIsActive()) {
+        sensor_armPower = 1;
+        sensor_arm.setPosition(sensor_armPower);
 
+        while (opModeIsActive()) {
             double leftPower;
             double rightPower;
             double drive = -gamepad1.left_stick_y;

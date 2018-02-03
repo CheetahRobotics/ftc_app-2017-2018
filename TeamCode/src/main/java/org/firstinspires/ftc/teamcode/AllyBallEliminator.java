@@ -36,18 +36,20 @@ public class AllyBallEliminator {
     double lastValueOfPower = 0;
     // returns the number of inches to move.
     // positive number means move forward, negative backwards.
-    public double checkSensor()
-    {
+    public double checkSensor() {
         int changeInPosition = 0;
         double power;
         if (nowImSure) {
-            changeInPosition =  Math.abs(leftMotor.getCurrentPosition() - startPosition);
-            if (changeInPosition > 1250) {
+            changeInPosition = Math.abs(leftMotor.getCurrentPosition() - startPosition);
+            if (changeInPosition > 100) {
                 power = 0;
-            }
-            else
+            } else
                 power = lastValueOfPower;
+            telemetry.addData("nowImSure", nowImSure);
             telemetry.addData("ChangeInPosition", changeInPosition);
+            telemetry.addData("Clear", colorSensor.alpha());
+            telemetry.addData("Red  ", colorSensor.red());
+            telemetry.addData("Blue ", colorSensor.blue());
             return power;
         }
         // hsvValues is an array that will hold the hue, saturation, and value information.
@@ -64,18 +66,19 @@ public class AllyBallEliminator {
             power = 1;
             ringtone1.play();
         } else {
-            power = .25;
+            power = .1;
         }
-        if (!allianceColorIsBlue)
+        if (allianceColorIsBlue)
             power = power * -1;
         lastValueOfPower = power;
 
-       telemetry.addData("Clear", colorSensor.alpha());
-       telemetry.addData("Red  ", colorSensor.red());
-       telemetry.addData("Blue ", colorSensor.blue());
-       telemetry.addData("Hue", hsvValues[0]);
-
+        telemetry.addData("nowImSure", nowImSure);
         telemetry.addData("ChangeInPosition", changeInPosition);
+        telemetry.addData("Clear", colorSensor.alpha());
+        telemetry.addData("Red  ", colorSensor.red());
+        telemetry.addData("Blue ", colorSensor.blue());
+        telemetry.addData("Hue", hsvValues[0]);
+
         return power;
     }
 }

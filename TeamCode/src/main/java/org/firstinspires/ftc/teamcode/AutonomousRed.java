@@ -40,7 +40,7 @@ public class AutonomousRed extends LinearOpMode {
         sensor_arm = hardwareMap.get(Servo.class, "arm_1");
 
         Driver driver = new Driver(hardwareMap, telemetry);
-        AllyBallEliminator allyBallEliminator = new AllyBallEliminator(hardwareMap, telemetry, driver.leftDrive,false);
+        AllyBallEliminator allyBallEliminator = new AllyBallEliminator(hardwareMap, telemetry, driver.leftDrive, false);
         double s = runtime.seconds();
         int state = 0;
 
@@ -55,26 +55,26 @@ public class AutonomousRed extends LinearOpMode {
 
             s = runtime.seconds();
 
- //           if (s < 2) {
- //               state = 0;
- //               sensor_armPower = .7;//drop arm
- //           } else if (s < 4) {
- //               state = 1;
- //               driver.driveStraight(power);
- //               power = allyBallEliminator.checkSensor();
-
-                if (s < .75) {
-                    state = 1;
-                    driver.driveStraight(1.0);
-                } else if (s < 1.2) {
-                    state = 2;
-                    driver.turnRight(1.0);
-                } else if (s < 1.5) {
-                    state = 3;
-                    driver.driveStraight(1.0);
-                } else {
-                    driver.stop();
-                }
+            if (s < 2) {
+                state = 0;
+                sensor_armPower = .3;//drop arm
+            } else if (s < 4) {
+                state = 1;
+                driver.driveStraight(power/driver.scaleFactor);
+                power = allyBallEliminator.checkSensor();
+            } else if (s < 5) {
+                state = 2;
+                sensor_armPower = 1;
+                driver.driveStraight(-1.0);
+            } else if (s < 5.70) {
+                state = 3;
+                driver.turnRight(1.0);
+            } else if (s < 6.25) {
+                state = 4;
+                driver.driveStraight(-1.0);
+            } else {
+                driver.stop();
+            }
             sensor_arm.setPosition(sensor_armPower);
 
             // Show the elapsed game time and wheel power.
