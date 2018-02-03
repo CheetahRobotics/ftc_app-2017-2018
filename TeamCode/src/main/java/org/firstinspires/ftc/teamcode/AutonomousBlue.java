@@ -55,26 +55,22 @@ public class AutonomousBlue extends LinearOpMode {
 
             s = runtime.seconds();
 
-//            if (s < 2) {
-//                state = 0;
-//                sensor_armPower = .7;//drop arm
-//            } else if (s < 4) {
-//                state = 1;
-//                driver.driveStraight(power);
-//                power = allyBallEliminator.checkSensor();
-
-//            } if (s < 4.5) {
-//                driver.stop();
-//                state = 1;
-//                sensor_armPower = -1; // lift arm}
-               if (s < .75) {
+            if (s < 2) {
+                state = 0;
+                sensor_armPower = .3;//drop arm
+            } else if (s < 4) {
                 state = 1;
-                driver.driveStraight(1.0);
-            } else if (s < 1.2) {
+                driver.driveStraight(power / driver.scaleFactor);
+                power = allyBallEliminator.checkSensor();
+            } else if (s < 4.75) {
                 state = 2;
-                driver.turnLeft(1.0);
-            } else if (s < 1.5) {
+                sensor_armPower = 1;//lift arm
+                driver.driveStraight(1.0);
+            } else if (s < 5.2) {
                 state = 3;
+                driver.turnLeft(1.0);
+            } else if (s < 6.5) {
+                state = 4;
                 driver.driveStraight(1.0);
             } else {
                 driver.stop();

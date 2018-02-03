@@ -64,7 +64,7 @@ public class AutonomousRed extends LinearOpMode {
                 power = allyBallEliminator.checkSensor();
             } else if (s < 5) {
                 state = 2;
-                sensor_armPower = 1;
+                sensor_armPower = 1;//lift arm
                 driver.driveStraight(-1.0);
             } else if (s < 5.70) {
                 state = 3;
